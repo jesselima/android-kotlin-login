@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import com.example.android.firebaseui_login_sample.databinding.FragmentMainBinding
@@ -83,6 +84,27 @@ class MainFragment : Fragment() {
 
         // TODO Use the authenticationState variable from LoginViewModel to update the UI
         //  accordingly.
+        viewModel.authenticateState.observe(viewLifecycleOwner, { authenticateState ->
+            when (authenticateState) {
+                AuthenticationState.AUTHENTICATED -> {
+                    binding.authButton.text = getString(R.string.logout_button_text)
+                    binding.authButton.setOnClickListener {
+                        AuthUI.getInstance().signOut(requireContext())
+                    }
+                    binding.welcomeText.text = getFactWithPersonalization(factToDisplay)
+                }
+                else -> {
+                    // If there is no logged-in user, auth_button should display Login and
+                    // launch the sign in screen when clicked.
+                    binding.welcomeText.text = factToDisplay
+                    binding.authButton.text = getString(R.string.login_button_text)
+                    binding.authButton.setOnClickListener {
+                        launchSignInFlow()
+                    }
+                }
+            }
+        })
+
         //
         //  TODO If there is a logged-in user, authButton should display Logout. If the
         //   user is logged in, you can customize the welcome message by utilizing
