@@ -39,5 +39,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.authenticateState.observe(viewLifecycleOwner, { authenticateState ->
+           if (authenticateState != AuthenticationState.AUTHENTICATED) {
+               findNavController().navigate(R.id.loginFragment)
+           }
+        })
     }
 }
