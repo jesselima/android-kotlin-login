@@ -72,6 +72,39 @@ class LoginFragment : Fragment() {
             navController.popBackStack(R.id.mainFragment, false)
         }
 
+        // Observe the authentication state so we can know if the user has logged in successfully.
+        // If the user has logged in successfully, bring them back to the settings screen.
+        // If the user did not log in successfully, display an error message.
+        /**
+            Popping the Back Stack
+
+            As the user progresses through an app, Android keeps track of the screens they visit.
+            When the user presses the back button, the app goes back through the visited screens
+            in order.
+
+            When you pop a screen off the backstack, you are basically telling Android to skip that
+            screen when the user presses the back button.
+
+            In this case, you are removing the current screen from the back stack so that when the
+            user presses the back button, the app skips this screen and goes back to the screen that
+            the user visited before visiting this one.
+
+            In other words, when the user presses the back button, the app does not come back to the
+            login screen, instead it goes to the screen that the user visited before coming to the
+            login screen.
+         */
+        viewModel.authenticateState.observe(viewLifecycleOwner, { authenticationState ->
+            when (authenticationState) {
+                AuthenticationState.AUTHENTICATED -> {
+                    navController.popBackStack()
+                }
+                else -> Log.e(
+                    TAG,
+                    "Authentication state that doesn't require any UI change $authenticationState"
+                )
+            }
+        })
+
 
     }
 
